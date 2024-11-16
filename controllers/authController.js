@@ -1,12 +1,16 @@
 const User = require("../models/User");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
+// const mongoose = require("mongoose");
+// const { ObjectId } = mongoose.Types;
 
 const registerUser = async (req, res) => {
   const { username, email, password, role } = req.body;
+  // const customId = new ObjectId();
 
   try {
     const newUser = new User({
+      // user_id: customId,
       username,
       email,
       password,
