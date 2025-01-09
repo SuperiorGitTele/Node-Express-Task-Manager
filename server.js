@@ -1,25 +1,25 @@
-require("dotenv").config();
-const express = require("express");
-const connectDB = require("./config/db");
-const cors = require('cors');
+import express from "express"
+import dotenv from "dotenv"
 
-const app = express();
+import {connectDB} from './config/db.js'
+import auth from './routes/auth.routes.js'
+import task from './routes/task.routes.js'
+import user from './routes/user.routes.js'
 
-// Middleware
+dotenv.config()
+const app = express()
 
 app.use(express.json());
 
-// API Route
-app.use('/api/auth', require('./routes/authRoute'));
+//mongodb connection
+connectDB()
 
-app.use(cors())
+//routes
+app.use('/api/auth', auth)
+app.use('/api/tasks', task)
+app.use('/api/user', user)
 
-// Connect to the database
-connectDB();
-
-// Start the server
-const port = process.env.PORT || 4000;
+const port = process.env.PORT || 4000
 app.listen(port, () => {
-  console.log(`Server is running on http://localhost:${port}`);
-});
-
+    console.log(`Server is running on http://localhost:${port}`);
+})
