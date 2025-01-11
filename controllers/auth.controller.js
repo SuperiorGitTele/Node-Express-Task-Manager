@@ -7,7 +7,7 @@ import dotenv from "dotenv";
 
 dotenv.config();
 
-const secretKey = process.env.JWT_SECRET || "your_secret_key";
+const secretKey = process.env.JWT_TOKEN || "your_secret_key";
 
 export const registerUser = async (req, res) => {
   try {
@@ -19,12 +19,13 @@ export const registerUser = async (req, res) => {
         .json({ message: "Please provide all field details!" });
     }
 
-    // Check if user already exists by username
+    // Check if user already exists by username or email
     const existingUser = await User.findOne({ $or: [{ username }, { email }] });
     if (existingUser) {
       return res.status(400).json({ message: "Username already exists!" });
     }
 
+    // Hashing password
     const salt = await bcryptjs.genSalt(10);
     const hashpassword = await bcryptjs.hash(password, salt);
 

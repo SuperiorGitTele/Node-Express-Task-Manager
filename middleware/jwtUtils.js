@@ -1,5 +1,6 @@
 import jwt from "jsonwebtoken";
 import dotenv from "dotenv";
+import TokenBlacklist from "../models/TokenBlacklist.js";
 
 dotenv.config();
 
@@ -21,7 +22,7 @@ export const validateToken = (req, res, next) => {
   }
 
   try {
-    const decoded = jwt.verify(token, process.env.JWT_TOKEN);
+    const decoded = jwt.verify(token, secretKey);
     req.user = decoded;
     next();
   } catch (error) {
@@ -40,6 +41,16 @@ export const checkToken = (req, res) => {
     
     res.json({ valid: true });
   });
+};
+
+export const isTokenBlacklisted = async (req, res, next) => {
+  const token = req.headers['authorization']?.split(' ')[1];
+
+  const blacklist = await TokenBlacklist.findOne({ token })
+  if (blacklist) {
+    return res.status(401).json({ message: 'Token is invalidated' });
+  }
+  next();
 };
 
 // Token Refresh
